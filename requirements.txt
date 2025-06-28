@@ -1,7 +1,7 @@
 azure-functions==1.17.0
 azure-cosmos==4.5.1
 azure-storage-blob==12.19.0
-azure-identity==1.15.0
+azure-identity==1.16.1
 fastapi==0.104.1
 uvicorn==0.24.0
 pydantic[email]==2.5.0
