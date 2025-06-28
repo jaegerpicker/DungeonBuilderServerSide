@@ -1,648 +1,297 @@
-# Dungeon Builder Backend
+# DungeonBuilderServerSide
 
-A comprehensive serverless multiplayer dungeon builder application built with Azure Functions and Python. This backend provides all the necessary APIs for a multiplayer dungeon creation and sharing platform.
+A multiplayer dungeon builder backend built with Azure Functions and Python, featuring comprehensive testing and CI/CD pipeline.
 
-## Features
+## 🏗️ Architecture
 
-### Authentication & User Management
+- **Backend**: Azure Functions with Python 3.10
+- **Database**: Azure Cosmos DB
+- **Authentication**: JWT-based with bcrypt password hashing
+- **Testing**: pytest with 91.94% code coverage
+- **CI/CD**: GitHub Actions with automated testing and deployment
 
-- User registration and login with JWT tokens
-- User profiles with stats and achievements
-- User search functionality
+## 🚀 Features
 
-### Dungeon Management
+### Core Services
 
-- Create, read, update, and delete dungeons
-- Share dungeons as JSON files
-- Rate dungeons (1-5 stars)
-- Search and filter dungeons by difficulty, tags, and popularity
-- Public and private dungeon support
+- **User Management**: Registration, authentication, profile management
+- **Dungeon Builder**: Create, edit, and share custom dungeons
+- **Multiplayer Lobbies**: Real-time lobby management for dungeon runs
+- **Guild System**: Team-based features and guild management
+- **Friendship System**: Social features with friend requests and blocking
+- **Leaderboards**: Global and dungeon-specific rankings
 
-### Multiplayer Features
+### Technical Features
 
-- Create and manage lobbies for multiplayer sessions
-- Invite friends to lobbies
-- Join public lobbies
-- Password-protected lobbies
-- Real-time lobby status management
+- **Comprehensive Testing**: 267 tests with 91.94% coverage
+- **Data Validation**: Pydantic models for type safety
+- **Error Handling**: Robust error handling and logging
+- **Scalable Architecture**: Serverless design for automatic scaling
 
-### Social Features
-
-- Friend system with requests and management
-- Block/unblock users
-- Guild creation and management
-- Team building for adventures
-
-### Leaderboards
-
-- Player leaderboards based on scores and achievements
-- Dungeon leaderboards based on ratings and play count
-- Top creators rankings
-- Most played dungeons
-
-## Architecture
-
-### Technology Stack
-
-- **Azure Functions**: Serverless compute platform
-- **Azure Cosmos DB**: NoSQL database for data storage
-- **Python 3.9+**: Backend programming language
-- **JWT**: Authentication and authorization
-- **Pydantic**: Data validation and serialization
-- **Serverless Framework**: Infrastructure as Code and deployment
-
-### Project Structure
+## 📊 Test Coverage
 
 ```
-DungeonBuilderBackend/
-├── models/                 # Data models and schemas
-├── services/              # Business logic services
-├── auth/                  # Authentication functions
-├── dungeons/              # Dungeon management functions
-├── guilds/                # Guild management functions
-├── lobbies/               # Multiplayer lobby functions
-├── friends/               # Friend system functions
-├── leaderboard/           # Leaderboard functions
-├── users/                 # User management functions
-├── health/                # Health check function
-├── tests/                 # Test suite
-│   ├── conftest.py        # Pytest configuration and fixtures
-│   ├── test_models.py     # Data model tests
-│   ├── test_services.py   # Service layer tests
-│   ├── test_functions.py  # Azure Functions tests
-│   └── test_integration.py # Integration tests
-├── requirements.txt       # Python dependencies
-├── package.json           # Node.js dependencies for Serverless Framework
-├── serverless.yml         # Serverless Framework configuration
-├── pytest.ini            # Pytest configuration
-├── host.json             # Azure Functions configuration
-├── local.settings.json   # Local development settings
-├── deploy.sh             # Linux/macOS deployment script
-├── deploy.bat            # Windows deployment script
-├── setup.sh              # Linux/macOS setup script
-├── setup.bat             # Windows setup script
-├── test_api.py           # API testing script
-└── README.md             # Project documentation
+Name                              Stmts   Miss  Cover   Missing
+---------------------------------------------------------------
+auth/__init__.py                     60     17    72%   39-47, 55, 64, 87-89, 97, 105, 113, 124-126, 134
+dungeons/__init__.py                131     25    81%   30, 44, 59, 63, 76, 78, 97, 117-119, 127, 157-159, 167, 195-197, 205, 238-246, 254
+friends/__init__.py                 168     49    71%   30, 37-38, 49-51, 59, 63, 80, 91-93, 101, 118, 129-131, 139, 159-161, 169, 189-191, 199, 219-221, 229, 246, 257-259, 267, 288-296, 304, 321, 332-334, 342, 367-369
+guilds/__init__.py                  145     33    77%   30, 44, 59, 63, 73, 75, 94, 114-116, 124, 137-139, 147, 175, 186-188, 196, 215, 226-228, 236, 255, 266-268, 276, 303-305
+health/__init__.py                   14      4    71%   30-36, 44
+leaderboard/__init__.py             157     37    76%   34-36, 44, 48, 71, 91-93, 101, 121-123, 131, 151-153, 161, 181-183, 191, 204-206, 214, 227-229, 237, 274-276, 284, 322-324
+lobbies/__init__.py                 208     60    71%   30, 37-38, 49-51, 59, 63, 72, 91, 111-113, 121, 141, 152-154, 162, 179, 190-192, 200, 217, 228-230, 238, 245, 255, 266-268, 276, 283, 293, 304-306, 314, 345-353, 361, 381-383, 391, 408, 419-421, 429, 446, 457-459
+models/__init__.py                    7      0   100%
+services/__init__.py                  9      0   100%
+services/auth.py                     53      2    96%   67, 77
+services/database.py                 51      9    82%   37-38, 44, 55-56, 61, 66-68
+services/dungeon_service.py          78      0   100%
+services/friendship_service.py       89     32    64%   65, 80-87, 91-96, 106, 118-134, 138-142, 146-150, 154-155, 183
+services/guild_service.py            82      0   100%
+services/leaderboard_service.py      73      1    99%   157
+services/lobby_service.py           112     29    74%   53-57, 66, 91, 112-126, 134-148, 156-167, 173, 176, 179, 182, 198-212, 224, 230, 253
+services/user_service.py             62      0   100%
+users/__init__.py                    78     13    83%   42-44, 52, 84, 88, 126-128, 136, 163-165
+---------------------------------------------------------------
+TOTAL                              4183    337    92%
 ```
 
-## API Endpoints
-
-### Authentication
-
-- `POST /auth/register` - Register a new user
-- `POST /auth/login` - Login user
-- `GET /auth/me` - Get current user profile
-
-### Users
-
-- `GET /users?search={term}` - Search users
-- `GET /users/{user_id}` - Get user profile
-- `PUT /users/profile` - Update current user profile
-- `GET /users/me` - Get current user profile
-
-### Dungeons
-
-- `POST /dungeons` - Create a new dungeon
-- `GET /dungeons` - Get dungeons with filtering
-- `GET /dungeons/{dungeon_id}` - Get specific dungeon
-- `PUT /dungeons/{dungeon_id}` - Update dungeon
-- `DELETE /dungeons/{dungeon_id}` - Delete dungeon
-- `POST /dungeons/{dungeon_id}/rate` - Rate a dungeon
-- `POST /dungeons/{dungeon_id}/play` - Increment play count
-
-### Guilds
-
-- `POST /guilds` - Create a new guild
-- `GET /guilds` - Get guilds with filtering
-- `GET /guilds/{guild_id}` - Get specific guild
-- `GET /guilds/{guild_id}/members` - Get guild members
-- `POST /guilds/{guild_id}/members` - Add member to guild
-- `DELETE /guilds/{guild_id}/members/{member_id}` - Remove member
-- `PUT /guilds/{guild_id}` - Update guild
-- `GET /guilds/my` - Get current user's guild
-
-### Lobbies
-
-- `POST /lobbies` - Create a new lobby
-- `GET /lobbies` - Get lobbies with filtering
-- `GET /lobbies/{lobby_id}` - Get specific lobby
-- `POST /lobbies/{lobby_id}/join` - Join lobby
-- `POST /lobbies/{lobby_id}/leave` - Leave lobby
-- `POST /lobbies/{lobby_id}/start` - Start lobby
-- `POST /lobbies/{lobby_id}/complete` - Complete lobby
-- `POST /lobbies/{lobby_id}/cancel` - Cancel lobby
-- `POST /lobbies/{lobby_id}/invite` - Invite to lobby
-- `GET /lobbies/invites` - Get lobby invites
-- `POST /lobbies/invites/{invite_id}/accept` - Accept lobby invite
-- `POST /lobbies/invites/{invite_id}/decline` - Decline lobby invite
-
-### Friends
-
-- `POST /friends/request` - Send friend request
-- `POST /friends/request/{requester_id}/accept` - Accept friend request
-- `POST /friends/request/{requester_id}/reject` - Reject friend request
-- `GET /friends` - Get friends list
-- `GET /friends/requests/pending` - Get pending requests
-- `GET /friends/requests/sent` - Get sent requests
-- `DELETE /friends/{friend_id}` - Remove friend
-- `POST /friends/{user_id}/block` - Block user
-- `POST /friends/{user_id}/unblock` - Unblock user
-- `GET /friends/{user_id}/check` - Check friendship status
-
-### Leaderboards
-
-- `GET /leaderboard/players` - Get player leaderboard
-- `GET /leaderboard/dungeons` - Get dungeon leaderboard
-- `GET /leaderboard/players/rank/{user_id}` - Get player rank
-- `GET /leaderboard/dungeons/rank/{dungeon_id}` - Get dungeon rank
-- `GET /leaderboard/players/{user_id}` - Get player score
-- `GET /leaderboard/dungeons/{dungeon_id}` - Get dungeon score
-- `GET /leaderboard/players/top-creators` - Get top creators
-- `GET /leaderboard/dungeons/most-played` - Get most played dungeons
-- `POST /leaderboard/players/update` - Update player score
-- `POST /leaderboard/dungeons/update` - Update dungeon score
-
-## Setup and Deployment
+## 🛠️ Development Setup
 
 ### Prerequisites
 
-- Python 3.9 or higher
-- Node.js 16 or higher
-- npm (comes with Node.js)
-- Azure CLI
-- Azure Functions Core Tools (for local development)
+- Python 3.10 or 3.11
+- Azure Functions Core Tools
+- Azure CLI (for deployment)
 
 ### Local Development
 
 1. **Clone the repository**
 
    ```bash
-   git clone <repository-url>
-   cd DungeonBuilderBackend
+   git clone https://github.com/yourusername/DungeonBuilderServerSide.git
+   cd DungeonBuilderServerSide
    ```
 
-2. **Install dependencies**
+2. **Create virtual environment**
 
    ```bash
-   # Install Python dependencies
+   python -m venv venv
+   source venv/bin/activate  # On Windows: venv\Scripts\activate
+   ```
+
+3. **Install dependencies**
+
+   ```bash
    pip install -r requirements.txt
-
-   # Install Node.js dependencies
-   npm install
    ```
 
-3. **Configure environment variables**
-   Update `local.settings.json` with your Azure Cosmos DB credentials:
+4. **Run tests**
 
-   ```json
-   {
-     "IsEncrypted": false,
-     "Values": {
-       "AzureWebJobsStorage": "UseDevelopmentStorage=true",
-       "FUNCTIONS_WORKER_RUNTIME": "python",
-       "COSMOS_DB_ENDPOINT": "your_cosmos_db_endpoint",
-       "COSMOS_DB_KEY": "your_cosmos_db_key",
-       "COSMOS_DB_DATABASE": "DungeonBuilderDB",
-       "JWT_SECRET": "your_jwt_secret_key_here",
-       "JWT_ALGORITHM": "HS256",
-       "JWT_EXPIRATION_MINUTES": "60"
-     }
-   }
+   ```bash
+   python -m pytest --cov=. --cov-report=html
    ```
 
-4. **Run locally**
+5. **Start local development server**
    ```bash
    func start
    ```
 
-### Serverless Framework Deployment
+## 🚀 Deployment
 
-The project uses the Serverless Framework for infrastructure as code and automated deployment. This provides a more modern, cross-platform approach to deploying Azure Functions.
+### GitHub Actions CI/CD
 
-#### Prerequisites for Deployment
+The project includes automated CI/CD pipelines:
 
-1. **Install Serverless Framework plugins**
+#### Continuous Integration (`ci.yml`)
 
-   ```bash
-   npm run setup:dev
-   ```
+- Runs on every push and pull request
+- Tests against Python 3.10 and 3.11
+- Generates coverage reports
+- Uploads coverage to Codecov
 
-2. **Login to Azure**
+#### Deployment (`deploy.yml`)
+
+- **Manual deployment only** (disabled automatic deployment for safety)
+- Deploy to staging or production environments
+- Requires Azure Functions publish profile
+
+### Manual Deployment
+
+1. **Setup Azure Functions**
+
    ```bash
    az login
-   ```
-
-#### Automated Deployment
-
-**Linux/macOS:**
-
-```bash
-./deploy.sh [stage] [region] [jwt_secret]
-```
-
-**Windows:**
-
-```cmd
-deploy.bat [stage] [region] [jwt_secret]
-```
-
-**Examples:**
-
-```bash
-# Deploy to dev environment
-./deploy.sh dev eastus my-super-secret-jwt-key
-
-# Deploy to production
-./deploy.sh prod eastus my-production-jwt-secret
-
-# Deploy to staging in West Europe
-./deploy.sh staging westeurope my-staging-jwt-secret
-```
-
-#### Manual Deployment
-
-1. **Install dependencies**
-
-   ```bash
-   npm install
-   pip install -r requirements.txt
+   az group create --name DungeonBuilderBackend --location eastus
+   az storage account create --name dungeonbuilderstorage --resource-group DungeonBuilderBackend --location eastus --sku Standard_LRS
+   az functionapp create --resource-group DungeonBuilderBackend --consumption-plan-location eastus --runtime python --runtime-version 3.10 --functions-version 4 --name dungeon-builder-backend --storage-account dungeonbuilderstorage --os-type linux
    ```
 
 2. **Deploy using Serverless Framework**
 
    ```bash
-   # Deploy to dev environment
-   npx serverless deploy --stage dev --region eastus
-
-   # Deploy to production
-   npx serverless deploy --stage prod --region eastus
+   npm install -g serverless
+   serverless deploy
    ```
 
-3. **Get deployment information**
+3. **Deploy using Azure Functions Core Tools**
    ```bash
-   npx serverless info --stage dev
+   func azure functionapp publish dungeon-builder-backend
    ```
 
-#### Deployment Features
+## 🔧 Configuration
 
-The Serverless Framework deployment automatically:
+### Environment Variables
 
-- Creates Azure Resource Group
-- Sets up Azure Key Vault for secure secret management
-- Creates Cosmos DB account with serverless capacity
-- Creates all required Cosmos DB containers
-- Deploys Azure Functions with proper configuration
-- Sets up environment variables and secrets
-- Configures CORS and authentication settings
+Create a `local.settings.json` file for local development:
 
-#### Environment Management
-
-The deployment supports multiple environments:
-
-- **dev**: Development environment
-- **staging**: Staging environment for testing
-- **prod**: Production environment
-
-Each environment gets its own:
-
-- Resource group
-- Key Vault
-- Cosmos DB account
-- Function App
-
-#### Useful Commands
-
-```bash
-# Deploy to specific stage
-npm run deploy:prod
-
-# Remove deployment
-npm run remove:prod
-
-# View logs
-npm run logs
-
-# Invoke function locally
-npm run invoke:local health
-
-# Package without deploying
-npm run package
-
-# Test API endpoints
-npm run test
+```json
+{
+  "IsEncrypted": false,
+  "Values": {
+    "AzureWebJobsStorage": "UseDevelopmentStorage=true",
+    "FUNCTIONS_WORKER_RUNTIME": "python",
+    "COSMOS_DB_CONNECTION_STRING": "your-cosmos-db-connection-string",
+    "JWT_SECRET": "your-jwt-secret-key",
+    "JWT_ALGORITHM": "HS256",
+    "JWT_EXPIRATION_HOURS": "24"
+  }
+}
 ```
 
-## Database Schema
+### Azure Configuration
 
-### Cosmos DB Containers
+Required Azure resources:
 
-- **users**: User accounts and profiles
-- **dungeons**: Dungeon data and metadata
-- **guilds**: Guild information and members
-- **lobbies**: Multiplayer lobby sessions
-- **friendships**: Friend relationships and requests
-- **ratings**: Dungeon ratings and reviews
-- **leaderboard**: Player and dungeon scores
+- **Azure Functions App**: Hosts the serverless functions
+- **Azure Cosmos DB**: NoSQL database for user data and game state
+- **Azure Storage Account**: For function app storage
 
-### Partition Keys
+## 📁 Project Structure
 
-- **users**: username
-- **dungeons**: creator_id
-- **guilds**: leader_id
-- **lobbies**: creator_id
-- **friendships**: requester_id
-- **ratings**: dungeon_id
-- **leaderboard**: partitionKey (player_scores/dungeon_scores)
+```
+DungeonBuilderServerSide/
+├── .github/
+│   ├── workflows/
+│   │   ├── ci.yml              # Continuous Integration
+│   │   └── deploy.yml          # Deployment pipeline
+│   └── project.yml             # GitHub Project configuration
+├── auth/                       # Authentication endpoints
+├── dungeons/                   # Dungeon management endpoints
+├── friends/                    # Friendship system endpoints
+├── guilds/                     # Guild management endpoints
+├── health/                     # Health check endpoints
+├── leaderboard/                # Leaderboard endpoints
+├── lobbies/                    # Multiplayer lobby endpoints
+├── models/                     # Pydantic data models
+├── services/                   # Business logic services
+├── tests/                      # Comprehensive test suite
+├── users/                      # User management endpoints
+├── host.json                   # Azure Functions host configuration
+├── serverless.yml              # Serverless Framework configuration
+└── requirements.txt            # Python dependencies
+```
 
-## Security
-
-### Authentication
-
-- JWT-based authentication with configurable expiration
-- Password hashing using bcrypt
-- Token-based session management
-
-### Authorization
-
-- Role-based access control (Player/Admin)
-- Resource ownership validation
-- Guild leadership permissions
-
-### Data Protection
-
-- Input validation using Pydantic models
-- SQL injection prevention through parameterized queries
-- CORS configuration for web clients
-
-## Performance Considerations
-
-### Database Optimization
-
-- Efficient partition key design for Cosmos DB
-- Indexed queries for common operations
-- Connection pooling and reuse
-
-### Caching Strategy
-
-- Leaderboard caching for frequently accessed data
-- User session caching
-- Guild member list caching
-
-### Scalability
-
-- Serverless architecture for automatic scaling
-- Stateless function design
-- Efficient data models for high-throughput operations
-
-## Monitoring and Logging
-
-### Application Insights
-
-- Automatic telemetry collection
-- Performance monitoring
-- Error tracking and alerting
-
-### Logging
-
-- Structured logging with correlation IDs
-- Error logging with stack traces
-- Audit logging for sensitive operations
-
-## Testing
-
-The project includes a comprehensive test suite with unit tests, integration tests, and API tests to ensure code quality and reliability.
-
-### Test Structure
-
-- **Unit Tests**: Test individual components in isolation
-- **Integration Tests**: Test interactions between components
-- **API Tests**: Test HTTP endpoints and responses
-- **Model Tests**: Test data validation and serialization
-
-### Test Categories
-
-- **Models** (`test_models.py`): Data model validation and serialization
-- **Services** (`test_services.py`): Business logic and database operations
-- **Functions** (`test_functions.py`): Azure Functions HTTP endpoints
-- **Integration** (`test_integration.py`): End-to-end workflows
+## 🧪 Testing
 
 ### Running Tests
 
-#### Prerequisites
-
-```bash
-# Install test dependencies
-pip install -r requirements.txt
-```
-
-#### Test Commands
-
 ```bash
 # Run all tests
-npm run test:all
+python -m pytest
 
-# Run unit tests only
-npm run test:unit
-
-# Run integration tests only
-npm run test:integration
+# Run with coverage
+python -m pytest --cov=. --cov-report=html
 
 # Run specific test categories
-npm run test:models
-npm run test:services
-npm run test:functions
-
-# Run tests with coverage
-npm run test:coverage
-
-# Run fast tests (excluding slow tests)
-npm run test:fast
-
-# Run authentication tests
-npm run test:auth
-
-# Run tests with verbose output
-pytest tests/ -v
-
-# Run specific test file
-pytest tests/test_models.py -v
-
-# Run specific test class
-pytest tests/test_models.py::TestUserModel -v
-
-# Run specific test method
-pytest tests/test_models.py::TestUserModel::test_valid_user_creation -v
+python -m pytest tests/test_models.py
+python -m pytest tests/test_services.py
+python -m pytest tests/test_functions.py
 ```
 
-#### Test Coverage
+### Test Categories
 
-The test suite aims for 80% code coverage. Coverage reports are generated in multiple formats:
+- **Model Tests**: Data validation and serialization
+- **Service Tests**: Business logic with mocked dependencies
+- **Function Tests**: Azure Functions endpoint testing
+- **Integration Tests**: End-to-end API testing
 
-- **Terminal**: Shows missing lines in terminal output
-- **HTML**: Detailed coverage report in `htmlcov/index.html`
-- **XML**: Coverage data for CI/CD integration
-
-```bash
-# Generate coverage report
-npm run test:coverage
-
-# View HTML coverage report
-open htmlcov/index.html
-```
-
-#### Test Markers
-
-Tests are categorized using pytest markers:
-
-- `@pytest.mark.unit`: Unit tests
-- `@pytest.mark.integration`: Integration tests
-- `@pytest.mark.slow`: Slow-running tests
-- `@pytest.mark.auth`: Authentication tests
-- `@pytest.mark.models`: Data model tests
-- `@pytest.mark.services`: Service layer tests
-- `@pytest.mark.functions`: Azure Functions tests
-
-#### Test Fixtures
-
-The test suite includes comprehensive fixtures for:
-
-- **Mock Services**: Database and authentication services
-- **Sample Data**: Users, dungeons, guilds, lobbies, etc.
-- **JWT Tokens**: Valid and expired tokens for testing
-- **HTTP Requests**: Mock request objects
-- **Azure Context**: Mock Azure Functions context
-
-#### Continuous Integration
-
-Tests are configured to run in CI/CD pipelines with:
-
-- Coverage reporting
-- Test result aggregation
-- Failure thresholds
-- Parallel test execution
-
-### Writing Tests
-
-#### Unit Test Example
-
-```python
-def test_user_registration_success(database_service, auth_service):
-    """Test successful user registration."""
-    user_service = UserService(database_service, auth_service)
-
-    with patch.object(database_service, 'query_items') as mock_query:
-        mock_query.return_value = []  # No existing user
-
-        with patch.object(database_service, 'create_item') as mock_create:
-            mock_create.return_value = {"id": "new-user-123"}
-
-            result = user_service.register_user("newuser", "new@example.com", "password123")
-
-            assert result is not None
-            assert "user_id" in result
-            assert "token" in result
-```
-
-#### Integration Test Example
-
-```python
-def test_complete_user_workflow(database_service, auth_service):
-    """Test complete user registration and login workflow."""
-    user_service = UserService(database_service, auth_service)
-
-    # Register user
-    with patch.object(database_service, 'query_items') as mock_query:
-        mock_query.return_value = []
-
-        with patch.object(database_service, 'create_item') as mock_create:
-            mock_create.return_value = {"id": "new-user-123"}
-
-            result = user_service.register_user("newuser", "new@example.com", "password123")
-
-            # Verify registration
-            assert result is not None
-            token = result["token"]
-
-            # Verify token
-            payload = auth_service.verify_token(token)
-            assert payload is not None
-            assert payload["user_id"] == "new-user-123"
-```
-
-#### API Test Example
-
-```python
-def test_register_endpoint_success(mock_request, mock_context, database_service, auth_service):
-    """Test successful user registration via API endpoint."""
-    mock_request.method = "POST"
-    mock_request.get_body.return_value = json.dumps({
-        "username": "newuser",
-        "email": "new@example.com",
-        "password": "password123"
-    }).encode('utf-8')
-
-    with patch('auth.DatabaseService') as mock_db_class:
-        mock_db_class.return_value = database_service
-
-        with patch('auth.AuthService') as mock_auth_class:
-            mock_auth_class.return_value = auth_service
-
-            with patch.object(database_service, 'query_items') as mock_query:
-                mock_query.return_value = []
-
-                with patch.object(database_service, 'create_item') as mock_create:
-                    mock_create.return_value = {"id": "new-user-123"}
-
-                    result = auth.main(mock_request, mock_context)
-
-                    assert result.status_code == 201
-                    data = json.loads(result.get_body())
-                    assert "user_id" in data
-                    assert "token" in data
-```
-
-### Test Best Practices
-
-1. **Use Descriptive Names**: Test names should clearly describe what is being tested
-2. **Arrange-Act-Assert**: Structure tests with clear setup, execution, and verification
-3. **Mock External Dependencies**: Use mocks for database, external APIs, and services
-4. **Test Edge Cases**: Include tests for error conditions and boundary values
-5. **Keep Tests Fast**: Avoid slow operations and use appropriate markers
-6. **Maintain Test Data**: Use fixtures for consistent test data
-7. **Test One Thing**: Each test should verify a single behavior
-8. **Use Meaningful Assertions**: Assertions should be specific and descriptive
-
-### Debugging Tests
-
-```bash
-# Run tests with debug output
-pytest tests/ -v -s
-
-# Run specific test with debug
-pytest tests/test_models.py::TestUserModel::test_valid_user_creation -v -s
-
-# Run tests with maximum verbosity
-pytest tests/ -vvv
-
-# Run tests and stop on first failure
-pytest tests/ -x
-
-# Run tests and show local variables on failure
-pytest tests/ --tb=long
-```
-
-## Contributing
+## 🤝 Contributing
 
 1. Fork the repository
-2. Create a feature branch
-3. Make your changes
-4. Add tests for new functionality
-5. Submit a pull request
+2. Create a feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'Add amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
 
-## License
+### Development Guidelines
 
-This project is licensed under the MIT License - see the LICENSE file for details.
+- Maintain 90%+ test coverage
+- Follow PEP 8 style guidelines
+- Add tests for new features
+- Update documentation for API changes
 
-## Support
+## 📝 API Documentation
 
-For support and questions, please open an issue in the GitHub repository or contact the development team.
+### Authentication Endpoints
+
+- `POST /api/auth/register` - User registration
+- `POST /api/auth/login` - User login
+- `GET /api/auth/me` - Get current user
+
+### User Endpoints
+
+- `GET /api/users/{username}` - Get user profile
+- `PUT /api/users/{username}` - Update user profile
+- `GET /api/users/search` - Search users
+
+### Dungeon Endpoints
+
+- `POST /api/dungeons` - Create dungeon
+- `GET /api/dungeons/{id}` - Get dungeon
+- `PUT /api/dungeons/{id}` - Update dungeon
+- `DELETE /api/dungeons/{id}` - Delete dungeon
+- `GET /api/dungeons/search` - Search dungeons
+
+### Lobby Endpoints
+
+- `POST /api/lobbies` - Create lobby
+- `GET /api/lobbies/{id}` - Get lobby
+- `POST /api/lobbies/{id}/join` - Join lobby
+- `POST /api/lobbies/{id}/leave` - Leave lobby
+- `POST /api/lobbies/{id}/start` - Start game
+
+### Guild Endpoints
+
+- `POST /api/guilds` - Create guild
+- `GET /api/guilds/{id}` - Get guild
+- `POST /api/guilds/{id}/members` - Add member
+- `DELETE /api/guilds/{id}/members/{member_id}` - Remove member
+
+### Friendship Endpoints
+
+- `POST /api/friends/request` - Send friend request
+- `POST /api/friends/accept` - Accept friend request
+- `POST /api/friends/reject` - Reject friend request
+- `DELETE /api/friends/{friend_id}` - Remove friend
+
+### Leaderboard Endpoints
+
+- `GET /api/leaderboard/players` - Get player leaderboard
+- `GET /api/leaderboard/dungeons` - Get dungeon leaderboard
+- `GET /api/leaderboard/players/{player_id}/rank` - Get player rank
+
+## 📄 License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+## 🆘 Support
+
+For support and questions:
+
+- Create an issue on GitHub
+- Check the [Wiki](https://github.com/yourusername/DungeonBuilderServerSide/wiki)
+- Review the [API Documentation](docs/api.md)
+
+---
+
+**Built with ❤️ using Azure Functions and Python**

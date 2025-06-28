@@ -1,0 +1,68 @@
+name: DungeonBuilderServerSide Project
+description: Multiplayer Dungeon Builder Backend - Azure Functions with comprehensive testing
+
+# Project fields
+fields:
+  - name: Status
+    type: SingleSelect
+    options:
+      - name: Backlog
+        color: 0
+      - name: In Progress
+        color: 1
+      - name: Review
+        color: 2
+      - name: Done
+        color: 3
+      - name: Blocked
+        color: 4
+
+  - name: Priority
+    type: SingleSelect
+    options:
+      - name: Low
+        color: 0
+      - name: Medium
+        color: 1
+      - name: High
+        color: 2
+      - name: Critical
+        color: 3
+
+  - name: Type
+    type: SingleSelect
+    options:
+      - name: Feature
+        color: 0
+      - name: Bug
+        color: 1
+      - name: Enhancement
+        color: 2
+      - name: Documentation
+        color: 3
+      - name: Testing
+        color: 4
+
+# Views
+views:
+  - name: Board
+    layout: Board
+    groupByFieldId: Status
+    sortByFields:
+      - fieldId: Priority
+        direction: DESC
+      - fieldId: CreatedAt
+        direction: DESC
+
+  - name: Table
+    layout: Table
+    sortByFields:
+      - fieldId: CreatedAt
+        direction: DESC
+
+  - name: Roadmap
+    layout: Roadmap
+    groupByFieldId: Type
+    sortByFields:
+      - fieldId: CreatedAt
+        direction: ASC
