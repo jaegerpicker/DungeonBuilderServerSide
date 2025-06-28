@@ -1,0 +1,10 @@
+[run]
+omit =
+    test_api.py
+
+[report]
+exclude_lines =
+    pragma: no cover
+
+[coverage:report]
+fail_under = 90 

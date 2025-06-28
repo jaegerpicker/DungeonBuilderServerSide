@@ -1,0 +1,59 @@
+{
+  "name": "dungeon-builder-backend",
+  "version": "1.0.0",
+  "description": "Serverless multiplayer dungeon builder backend using Azure Functions",
+  "main": "index.js",
+  "scripts": {
+    "deploy": "serverless deploy",
+    "deploy:prod": "serverless deploy --stage prod",
+    "deploy:staging": "serverless deploy --stage staging",
+    "remove": "serverless remove",
+    "remove:prod": "serverless remove --stage prod",
+    "remove:staging": "serverless remove --stage staging",
+    "info": "serverless info",
+    "logs": "serverless logs -f",
+    "invoke": "serverless invoke -f",
+    "invoke:local": "serverless invoke local -f",
+    "package": "serverless package",
+    "test": "python test_api.py",
+    "test:local": "python test_api.py http://localhost:7071",
+    "test:unit": "pytest tests/ -m unit -v",
+    "test:integration": "pytest tests/ -m integration -v",
+    "test:models": "pytest tests/test_models.py -v",
+    "test:services": "pytest tests/test_services.py -v",
+    "test:functions": "pytest tests/test_functions.py -v",
+    "test:all": "pytest tests/ -v --cov=. --cov-report=html --cov-report=term-missing",
+    "test:coverage": "pytest tests/ --cov=. --cov-report=html --cov-report=term-missing --cov-fail-under=80",
+    "test:fast": "pytest tests/ -m 'not slow' -v",
+    "test:auth": "pytest tests/ -m auth -v",
+    "setup": "npm install && pip install -r requirements.txt",
+    "setup:dev": "npm run setup && serverless plugin install -n serverless-azure-functions && serverless plugin install -n serverless-python-requirements"
+  },
+  "keywords": [
+    "serverless",
+    "azure-functions",
+    "python",
+    "dungeon-builder",
+    "multiplayer",
+    "gaming"
+  ],
+  "author": "Dungeon Builder Team",
+  "license": "MIT",
+  "devDependencies": {
+    "serverless": "^3.38.0",
+    "serverless-azure-functions": "^3.0.0",
+    "serverless-python-requirements": "^6.0.0"
+  },
+  "engines": {
+    "node": ">=16.0.0",
+    "npm": ">=8.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/your-org/dungeon-builder-backend.git"
+  },
+  "bugs": {
+    "url": "https://github.com/your-org/dungeon-builder-backend/issues"
+  },
+  "homepage": "https://github.com/your-org/dungeon-builder-backend#readme"
+}

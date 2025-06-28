@@ -1,0 +1,581 @@
+service: dungeon-builder-backend
+
+frameworkVersion: "3"
+
+provider:
+  name: azure
+  runtime: python
+  region: eastus
+  stage: ${opt:stage, 'dev'}
+  resourceGroup: ${self:service}-${self:provider.stage}
+
+  # Environment variables
+  environment:
+    COSMOS_DB_DATABASE: DungeonBuilderDB
+    JWT_ALGORITHM: HS256
+    JWT_EXPIRATION_MINUTES: 60
+
+  # Function app configuration
+  functionApp:
+    name: ${self:service}-${self:provider.stage}
+    location: ${self:provider.region}
+    kind: functionapp
+    osType: Linux
+    runtime: python
+    runtimeVersion: 3.9
+    functionsVersion: 4
+    appSettings:
+      COSMOS_DB_DATABASE: ${self:provider.environment.COSMOS_DB_DATABASE}
+      JWT_ALGORITHM: ${self:provider.environment.JWT_ALGORITHM}
+      JWT_EXPIRATION_MINUTES: ${self:provider.environment.JWT_EXPIRATION_MINUTES}
+      COSMOS_DB_ENDPOINT: ${ssm:/dungeon-builder/${self:provider.stage}/cosmos-endpoint}
+      COSMOS_DB_KEY: ${ssm:/dungeon-builder/${self:provider.stage}/cosmos-key}
+      JWT_SECRET: ${ssm:/dungeon-builder/${self:provider.stage}/jwt-secret}
+
+  # Cosmos DB configuration
+  cosmosDb:
+    accountName: ${self:service}-cosmos-${self:provider.stage}
+    databaseName: ${self:provider.environment.COSMOS_DB_DATABASE}
+    containers:
+      - name: users
+        partitionKey: /partitionKey
+        throughput: 400
+      - name: dungeons
+        partitionKey: /partitionKey
+        throughput: 400
+      - name: guilds
+        partitionKey: /partitionKey
+        throughput: 400
+      - name: lobbies
+        partitionKey: /partitionKey
+        throughput: 400
+      - name: friendships
+        partitionKey: /partitionKey
+        throughput: 400
+      - name: ratings
+        partitionKey: /partitionKey
+        throughput: 400
+      - name: leaderboard
+        partitionKey: /partitionKey
+        throughput: 400
+
+functions:
+  # Health check function
+  health:
+    handler: health/__init__.py
+    events:
+      - http:
+          route: health
+          methods:
+            - GET
+          authLevel: anonymous
+
+  # Authentication functions
+  auth-register:
+    handler: auth/__init__.py
+    events:
+      - http:
+          route: auth/register
+          methods:
+            - POST
+          authLevel: anonymous
+
+  auth-login:
+    handler: auth/__init__.py
+    events:
+      - http:
+          route: auth/login
+          methods:
+            - POST
+          authLevel: anonymous
+
+  auth-me:
+    handler: auth/__init__.py
+    events:
+      - http:
+          route: auth/me
+          methods:
+            - GET
+          authLevel: function
+
+  # User management functions
+  users-search:
+    handler: users/__init__.py
+    events:
+      - http:
+          route: users
+          methods:
+            - GET
+          authLevel: function
+
+  users-profile:
+    handler: users/__init__.py
+    events:
+      - http:
+          route: users/profile
+          methods:
+            - PUT
+          authLevel: function
+
+  users-profile-id:
+    handler: users/__init__.py
+    events:
+      - http:
+          route: users/{user_id}
+          methods:
+            - GET
+          authLevel: function
+
+  users-me:
+    handler: users/__init__.py
+    events:
+      - http:
+          route: users/me
+          methods:
+            - GET
+          authLevel: function
+
+  # Dungeon management functions
+  dungeons-create:
+    handler: dungeons/__init__.py
+    events:
+      - http:
+          route: dungeons
+          methods:
+            - POST
+          authLevel: function
+
+  dungeons-list:
+    handler: dungeons/__init__.py
+    events:
+      - http:
+          route: dungeons
+          methods:
+            - GET
+          authLevel: anonymous
+
+  dungeons-get:
+    handler: dungeons/__init__.py
+    events:
+      - http:
+          route: dungeons/{dungeon_id}
+          methods:
+            - GET
+          authLevel: anonymous
+
+  dungeons-update:
+    handler: dungeons/__init__.py
+    events:
+      - http:
+          route: dungeons/{dungeon_id}
+          methods:
+            - PUT
+          authLevel: function
+
+  dungeons-delete:
+    handler: dungeons/__init__.py
+    events:
+      - http:
+          route: dungeons/{dungeon_id}
+          methods:
+            - DELETE
+          authLevel: function
+
+  dungeons-rate:
+    handler: dungeons/__init__.py
+    events:
+      - http:
+          route: dungeons/{dungeon_id}/rate
+          methods:
+            - POST
+          authLevel: function
+
+  dungeons-play:
+    handler: dungeons/__init__.py
+    events:
+      - http:
+          route: dungeons/{dungeon_id}/play
+          methods:
+            - POST
+          authLevel: anonymous
+
+  # Guild management functions
+  guilds-create:
+    handler: guilds/__init__.py
+    events:
+      - http:
+          route: guilds
+          methods:
+            - POST
+          authLevel: function
+
+  guilds-list:
+    handler: guilds/__init__.py
+    events:
+      - http:
+          route: guilds
+          methods:
+            - GET
+          authLevel: anonymous
+
+  guilds-get:
+    handler: guilds/__init__.py
+    events:
+      - http:
+          route: guilds/{guild_id}
+          methods:
+            - GET
+          authLevel: anonymous
+
+  guilds-members:
+    handler: guilds/__init__.py
+    events:
+      - http:
+          route: guilds/{guild_id}/members
+          methods:
+            - GET
+          authLevel: anonymous
+
+  guilds-add-member:
+    handler: guilds/__init__.py
+    events:
+      - http:
+          route: guilds/{guild_id}/members
+          methods:
+            - POST
+          authLevel: function
+
+  guilds-remove-member:
+    handler: guilds/__init__.py
+    events:
+      - http:
+          route: guilds/{guild_id}/members/{member_id}
+          methods:
+            - DELETE
+          authLevel: function
+
+  guilds-update:
+    handler: guilds/__init__.py
+    events:
+      - http:
+          route: guilds/{guild_id}
+          methods:
+            - PUT
+          authLevel: function
+
+  guilds-my:
+    handler: guilds/__init__.py
+    events:
+      - http:
+          route: guilds/my
+          methods:
+            - GET
+          authLevel: function
+
+  # Lobby management functions
+  lobbies-create:
+    handler: lobbies/__init__.py
+    events:
+      - http:
+          route: lobbies
+          methods:
+            - POST
+          authLevel: function
+
+  lobbies-list:
+    handler: lobbies/__init__.py
+    events:
+      - http:
+          route: lobbies
+          methods:
+            - GET
+          authLevel: anonymous
+
+  lobbies-get:
+    handler: lobbies/__init__.py
+    events:
+      - http:
+          route: lobbies/{lobby_id}
+          methods:
+            - GET
+          authLevel: anonymous
+
+  lobbies-join:
+    handler: lobbies/__init__.py
+    events:
+      - http:
+          route: lobbies/{lobby_id}/join
+          methods:
+            - POST
+          authLevel: function
+
+  lobbies-leave:
+    handler: lobbies/__init__.py
+    events:
+      - http:
+          route: lobbies/{lobby_id}/leave
+          methods:
+            - POST
+          authLevel: function
+
+  lobbies-start:
+    handler: lobbies/__init__.py
+    events:
+      - http:
+          route: lobbies/{lobby_id}/start
+          methods:
+            - POST
+          authLevel: function
+
+  lobbies-complete:
+    handler: lobbies/__init__.py
+    events:
+      - http:
+          route: lobbies/{lobby_id}/complete
+          methods:
+            - POST
+          authLevel: function
+
+  lobbies-cancel:
+    handler: lobbies/__init__.py
+    events:
+      - http:
+          route: lobbies/{lobby_id}/cancel
+          methods:
+            - POST
+          authLevel: function
+
+  lobbies-invite:
+    handler: lobbies/__init__.py
+    events:
+      - http:
+          route: lobbies/{lobby_id}/invite
+          methods:
+            - POST
+          authLevel: function
+
+  lobbies-invites:
+    handler: lobbies/__init__.py
+    events:
+      - http:
+          route: lobbies/invites
+          methods:
+            - GET
+          authLevel: function
+
+  lobbies-accept-invite:
+    handler: lobbies/__init__.py
+    events:
+      - http:
+          route: lobbies/invites/{invite_id}/accept
+          methods:
+            - POST
+          authLevel: function
+
+  lobbies-decline-invite:
+    handler: lobbies/__init__.py
+    events:
+      - http:
+          route: lobbies/invites/{invite_id}/decline
+          methods:
+            - POST
+          authLevel: function
+
+  # Friend management functions
+  friends-request:
+    handler: friends/__init__.py
+    events:
+      - http:
+          route: friends/request
+          methods:
+            - POST
+          authLevel: function
+
+  friends-accept-request:
+    handler: friends/__init__.py
+    events:
+      - http:
+          route: friends/request/{requester_id}/accept
+          methods:
+            - POST
+          authLevel: function
+
+  friends-reject-request:
+    handler: friends/__init__.py
+    events:
+      - http:
+          route: friends/request/{requester_id}/reject
+          methods:
+            - POST
+          authLevel: function
+
+  friends-list:
+    handler: friends/__init__.py
+    events:
+      - http:
+          route: friends
+          methods:
+            - GET
+          authLevel: function
+
+  friends-pending-requests:
+    handler: friends/__init__.py
+    events:
+      - http:
+          route: friends/requests/pending
+          methods:
+            - GET
+          authLevel: function
+
+  friends-sent-requests:
+    handler: friends/__init__.py
+    events:
+      - http:
+          route: friends/requests/sent
+          methods:
+            - GET
+          authLevel: function
+
+  friends-remove:
+    handler: friends/__init__.py
+    events:
+      - http:
+          route: friends/{friend_id}
+          methods:
+            - DELETE
+          authLevel: function
+
+  friends-block:
+    handler: friends/__init__.py
+    events:
+      - http:
+          route: friends/{user_id}/block
+          methods:
+            - POST
+          authLevel: function
+
+  friends-unblock:
+    handler: friends/__init__.py
+    events:
+      - http:
+          route: friends/{user_id}/unblock
+          methods:
+            - POST
+          authLevel: function
+
+  friends-check:
+    handler: friends/__init__.py
+    events:
+      - http:
+          route: friends/{user_id}/check
+          methods:
+            - GET
+          authLevel: function
+
+  # Leaderboard functions
+  leaderboard-players:
+    handler: leaderboard/__init__.py
+    events:
+      - http:
+          route: leaderboard/players
+          methods:
+            - GET
+          authLevel: anonymous
+
+  leaderboard-dungeons:
+    handler: leaderboard/__init__.py
+    events:
+      - http:
+          route: leaderboard/dungeons
+          methods:
+            - GET
+          authLevel: anonymous
+
+  leaderboard-player-rank:
+    handler: leaderboard/__init__.py
+    events:
+      - http:
+          route: leaderboard/players/rank/{user_id}
+          methods:
+            - GET
+          authLevel: anonymous
+
+  leaderboard-dungeon-rank:
+    handler: leaderboard/__init__.py
+    events:
+      - http:
+          route: leaderboard/dungeons/rank/{dungeon_id}
+          methods:
+            - GET
+          authLevel: anonymous
+
+  leaderboard-player-score:
+    handler: leaderboard/__init__.py
+    events:
+      - http:
+          route: leaderboard/players/{user_id}
+          methods:
+            - GET
+          authLevel: anonymous
+
+  leaderboard-dungeon-score:
+    handler: leaderboard/__init__.py
+    events:
+      - http:
+          route: leaderboard/dungeons/{dungeon_id}
+          methods:
+            - GET
+          authLevel: anonymous
+
+  leaderboard-top-creators:
+    handler: leaderboard/__init__.py
+    events:
+      - http:
+          route: leaderboard/players/top-creators
+          methods:
+            - GET
+          authLevel: anonymous
+
+  leaderboard-most-played:
+    handler: leaderboard/__init__.py
+    events:
+      - http:
+          route: leaderboard/dungeons/most-played
+          methods:
+            - GET
+          authLevel: anonymous
+
+  leaderboard-update-player:
+    handler: leaderboard/__init__.py
+    events:
+      - http:
+          route: leaderboard/players/update
+          methods:
+            - POST
+          authLevel: function
+
+  leaderboard-update-dungeon:
+    handler: leaderboard/__init__.py
+    events:
+      - http:
+          route: leaderboard/dungeons/update
+          methods:
+            - POST
+          authLevel: function
+
+plugins:
+  - serverless-azure-functions
+  - serverless-python-requirements
+
+custom:
+  pythonRequirements:
+    dockerizePip: true
+    layer:
+      name: python-deps
+      description: Python dependencies for dungeon builder backend
+    noDeploy:
+      - coverage
+      - pytest
+      - pytest-cov
+      - black
+      - flake8
