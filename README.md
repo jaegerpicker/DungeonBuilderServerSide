@@ -59,9 +59,11 @@ TOTAL                              4183    337    92%
 
 ### Prerequisites
 
-- Python 3.10 or 3.11
+- **Python 3.10** (recommended) or Python 3.11
 - Azure Functions Core Tools
 - Azure CLI (for deployment)
+
+> **Note**: Python 3.13 is not supported due to compatibility issues with Pydantic's Rust core (`pydantic-core`). The project uses Python 3.10 for optimal stability and compatibility.
 
 ### Local Development
 
@@ -229,6 +231,7 @@ python -m pytest tests/test_functions.py
 - Follow PEP 8 style guidelines
 - Add tests for new features
 - Update documentation for API changes
+- **Use Python 3.10 for development** (3.11 is also supported)
 
 ## 📝 API Documentation
 
